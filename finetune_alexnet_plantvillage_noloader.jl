@@ -61,6 +61,21 @@ model = Chain(
     Dense(4096, num_classes),
     softmax
 )
+using Random
+Random.seed!(42)  # For reproducibility
+
+# Shuffle indices
+n = size(X, 4)
+indices = shuffle(1:n)
+train_size = Int(round(0.8 * n))
+train_idx = indices[1:train_size]
+test_idx = indices[train_size+1:end]
+
+# Split X and y
+X_train = X[:, :, :, train_idx]
+y_train = y[:, train_idx]
+X_test = X[:, :, :, test_idx]
+y_test = y[:, test_idx]
 
 loss(x, y) = Flux.crossentropy(model(x), y)
 opt = ADAM()
